@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>腾声汇 - 腾芳中学广播节目平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .week-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 42rem;
+            width: 90%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="container mx-auto px-4 py-10 flex-grow">
+        <!-- 头部 -->
+        <header class="text-center mb-12">
+            <div class="inline-block animate-float">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-5 rounded-2xl shadow-lg">
+                    <h1 class="text-4xl font-bold tracking-wide">腾芳中学校园网</h1>
+                    <p class="mt-2 text-blue-100 text-lg">腾声汇 - 校园广播节目平台</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 通知栏 -->
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg shadow-md max-w-4xl mx-auto mb-10">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 text-amber-500">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-amber-700 font-medium">提示：本页面用于全校统一播放周一、周二和周四的说法节目</p>
+                    <p class="text-amber-600 text-sm mt-1">收藏本页面后，老师们可以方便地点击对应节目按钮即可播放</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 当前日期显示 -->
+        <div class="bg-white rounded-xl shadow-md p-4 max-w-4xl mx-auto mb-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center mb-3 md:mb-0">
+                    <i class="fas fa-calendar-alt text-indigo-500 text-2xl mr-3"></i>
+                    <div>
+                        <span class="text-gray-700 font-medium">{{ current_date|date:"Y年m月d日 l" }}</span>
+                        <div class="text-sm text-gray-500">{{ semester_name }}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">第 {{ week_number }} 周 {% if is_odd_week %}(单周){% else %}(双周){% endif %}</span>
+                    <span class="ml-2 text-xs text-gray-500">自 {{ first_week_date|date:"Y年m月d日" }} 起</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <!-- 周一和周二节目正常显示 -->
+            {% for program in weekly_programs %}
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-3xl relative">
+                <div class="bg-gradient-to-r from-{{ program.color }}-500 to-{{ program.color }}-700 text-white p-10">
+                    <div class="flex items-center">
+                        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mr-6">
+                            <i class="fas {{ program.icon_class }} text-4xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">{{ program.day_of_week }}</h2>
+                            <p class="text-{{ program.color }}-100 text-xl">全校统一播放</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if program.week_type %}
+                <!-- 单双周标记 -->
+                <div class="week-badge bg-{{ program.color }}-100 text-{{ program.color }}-800">{{ program.week_type }}</div>
+                {% endif %}
+
+                <div class="p-10">
+                    <div class="mb-10 border-b border-gray-100 pb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-500 text-xl">节目名称:</span>
+                            <span class="font-semibold text-gray-800 text-xl">{{ program.name }}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-500 text-xl">当前节目日期:</span>
+                            <span class="font-semibold text-gray-800 text-xl">{{ program.current_date|date:"Y年m月d日" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500 text-xl">下次更新日期:</span>
+                            <span class="font-semibold text-gray-800 text-xl">{{ program.next_date|date:"Y年m月d日" }}</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ program.play_url }}" target="_blank" class="block w-full bg-{{ program.color }}-100 hover:bg-{{ program.color }}-200 text-{{ program.color }}-700 font-medium text-2xl py-8 px-6 rounded-2xl text-center transition duration-300 group">
+                        <div class="flex items-center justify-center">
+                            <div class="w-14 h-14 bg-{{ program.color }}-200 group-hover:bg-{{ program.color }}-300 rounded-full flex items-center justify-center mr-5 transition duration-300">
+                                <i class="fas fa-play text-{{ program.color }}-700 text-2xl"></i>
+                            </div>
+                            <span>播放本周节目</span>
+                        </div>
+                    </a>
+
+                    <div class="mt-5 text-center">
+                        <a href="{% url 'broadcast:program_history' program.id %}" class="inline-flex items-center text-{{ program.color }}-600 hover:text-{{ program.color }}-800 text-lg font-medium">
+                            <i class="fas fa-history mr-3"></i> 查看历史节目
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+    <!-- 唐宋八大家专用卡片 -->
+    <div class="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-3xl cursor-pointer" onclick="showTangSongModal()">
+        <div class="bg-gradient-to-r from-{{ tangsong_color }}-500 to-{{ tangsong_color }}-700 text-white p-10">
+            <div class="flex items-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mr-6">
+                    <i class="fas fa-book-open text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold mb-2">晚读经典赏析</h2>
+                    <p class="text-{{ tangsong_color }}-100 text-xl">唐宋八大家</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-10">
+            <div class="mb-10 border-b border-gray-100 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-500 text-xl">节目名称:</span>
+                    <span class="font-semibold text-gray-800 text-xl">唐宋八大家</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 text-xl">节目数量:</span>
+                    <span class="font-semibold text-gray-800 text-xl">{{ tangsong_programs_count }} 集</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-{{ tangsong_color }}-100 hover:bg-{{ tangsong_color }}-200 text-{{ tangsong_color }}-700 font-medium text-2xl py-8 px-6 rounded-2xl text-center transition duration-300 group">
+                <div class="flex items-center justify-center">
+                    <div class="w-14 h-14 bg-{{ tangsong_color }}-200 group-hover:bg-{{ tangsong_color }}-300 rounded-full flex items-center justify-center mr-5 transition duration-300">
+                        <i class="fas fa-list text-{{ tangsong_color }}-700 text-2xl"></i>
+                    </div>
+                    <span>浏览所有节目</span>
+                </div>
+            </div>
+
+            <div class="mt-5 text-center">
+                <p class="text-gray-500">点击卡片查看全部唐宋八大家节目</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 宗师列传·大唐诗人传卡片 (这部分缺失) -->
+    <div class="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-3xl cursor-pointer" onclick="showTangPoetModal()">
+        <div class="bg-gradient-to-r from-{{ tang_poets_color }}-500 to-{{ tang_poets_color }}-700 text-white p-10">
+            <div class="flex items-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mr-6">
+                    <i class="fas fa-feather text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold mb-2">晚读经典赏析</h2>
+                    <p class="text-{{ tang_poets_color }}-100 text-xl">大唐诗人传</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-10">
+            <div class="mb-10 border-b border-gray-100 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-500 text-xl">节目名称:</span>
+                    <span class="font-semibold text-gray-800 text-xl">大唐诗人传</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 text-xl">节目数量:</span>
+                    <span class="font-semibold text-gray-800 text-xl">{{ tang_poets_programs_count }} 集</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-{{ tang_poets_color }}-100 hover:bg-{{ tang_poets_color }}-200 text-{{ tang_poets_color }}-700 font-medium text-2xl py-8 px-6 rounded-2xl text-center transition duration-300 group">
+                <div class="flex items-center justify-center">
+                    <div class="w-14 h-14 bg-{{ tang_poets_color }}-200 group-hover:bg-{{ tang_poets_color }}-300 rounded-full flex items-center justify-center mr-5 transition duration-300">
+                        <i class="fas fa-list text-{{ tang_poets_color }}-700 text-2xl"></i>
+                    </div>
+                    <span>浏览所有节目</span>
+                </div>
+            </div>
+
+            <div class="mt-5 text-center">
+                <p class="text-gray-500">点击卡片查看全部大唐诗人传节目</p>
+            </div>
+        </div>
+    </div>
+            
+     <!-- 室内课件操卡片 -->
+    <div class="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-3xl">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-10">
+            <div class="flex items-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mr-6">
+                    <!-- 这里用一个代表课件的图标，比如 chalkboard-teacher -->
+                    <i class="fas fa-chalkboard-teacher text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold mb-2"> 课间操视频</h2>
+                    <p class="text-blue-100 text-xl">室内课间操</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-10">
+            <div class="mb-10 border-b border-gray-100 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-500 text-xl">节目名称:</span>
+                    <span class="font-semibold text-gray-800 text-xl">室内课间操</span>
+                </div>
+
+            </div>
+            <a href="{% url 'video_player' %}"  target="_blank" class="block w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-2xl py-8 px-6 rounded-2xl text-center transition duration-300 group">
+                <div class="flex items-center justify-center">
+                    <div class="w-14 h-14 bg-blue-200 group-hover:bg-blue-300 rounded-full flex items-center justify-center mr-5 transition duration-300">
+                        <i class="fas fa-play text-blue-700 text-2xl"></i>
+                    </div>
+                    <span>播放视频</span>
+                </div>
+            </a>
+            <div class="mt-5 text-center">
+                <p class="text-gray-500">点击卡片播放室内课间操视频</p>
+            </div>
+        </div>
+    </div>
+        
+            <!-- 如果周一和周二的节目都为空，则显示提示 -->
+            {% if not weekly_programs and not tangsong_programs %}
+            <div class="col-span-3 text-center py-16">
+                <div class="w-24 h-24 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-exclamation-circle text-gray-400 text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-600 mb-2">暂无节目</h3>
+                <p class="text-gray-500">目前没有任何可用的节目，请稍后再试。</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 唐宋八大家模态框 -->
+    <div id="tangSongModal" class="modal">
+        <div class="modal-content">
+            <div class="bg-gradient-to-r from-green-500 to-green-700 p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-white">唐宋八大家节目列表</h3>
+                    <button onclick="closeModal()" class="text-white hover:text-green-200 focus:outline-none">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                {% if tangsong_programs %}
+                <div class="bg-green-50 rounded-lg p-4 mb-6">
+                    <p class="text-green-800">
+                        <i class="fas fa-info-circle mr-2"></i>点击标题可直接播放对应节目
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    {% for program in tangsong_programs %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <a href="{{ program.link }}" target="_blank" class="block">
+                            <div class="p-4 hover:bg-green-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="text-lg font-medium text-gray-800">{{ program.title }}</h4>
+                                    <span class="text-sm text-gray-500">{{ program.publish_date|date:"Y-m-d" }}</span>
+                                </div>
+                                <div class="mt-2 flex items-center text-green-600">
+                                    <i class="fas fa-play-circle mr-2"></i>
+                                    <span>播放节目</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-16 h-16 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-exclamation-circle text-gray-400 text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-600">暂无节目</h4>
+                    <p class="text-gray-500 mt-2">唐宋八大家节目尚未上传</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-b-lg border-t border-gray-200">
+                <div class="text-center">
+                    <button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors">
+                        关闭窗口
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 大唐诗人传模态框 -->
+   <div id="tangPoetModal" class="modal">
+            <div class="modal-content">
+                <div class="bg-gradient-to-r from-amber-500 to-amber-700 p-6 rounded-t-lg">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-white">大唐诗人传节目列表</h3>
+                        <button onclick="closeModal('tangPoetModal')" class="text-white hover:text-amber-200 focus:outline-none">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    {% if tang_poets_programs %}
+                    <div class="bg-amber-50 rounded-lg p-4 mb-6">
+                        <p class="text-amber-800">
+                            <i class="fas fa-info-circle mr-2"></i>点击标题可直接播放对应节目
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for program in tang_poets_programs %}
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                            <a href="{{ program.link }}" target="_blank" class="block">
+                                <div class="p-4 hover:bg-amber-50 transition-colors">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="text-lg font-medium text-gray-800">{{ program.title }}</h4>
+                                        <span class="text-sm text-gray-500">{{ program.publish_date|date:"Y-m-d" }}</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-amber-600">
+                                        <i class="fas fa-play-circle mr-2"></i>
+                                        <span>播放节目</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-10">
+                        <div class="w-16 h-16 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-exclamation-circle text-gray-400 text-2xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-600">暂无节目</h4>
+                        <p class="text-gray-500 mt-2">大唐诗人传节目尚未上传</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-b-lg border-t border-gray-200">
+                    <div class="text-center">
+                        <button onclick="closeModal('tangPoetModal')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors">
+                            关闭窗口
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8 mt-10">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-4 text-lg">© {% now "Y" %} 腾芳中学 | 版权所有</p>
+            <p class="text-gray-400">用心点亮每一个课堂</p>
+            <div class="mt-6 flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                    <i class="fas fa-envelope text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                    <i class="fas fa-phone text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                    <i class="fas fa-map-marker-alt text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+     // 模态框控制
+        function showTangSongModal() {
+            document.getElementById('tangSongModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showTangPoetModal() {
+            document.getElementById('tangPoetModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            if (!modalId) {
+                // 如果没有指定ID，关闭所有模态窗口
+                document.getElementById('tangSongModal').style.display = 'none';
+                document.getElementById('tangPoetModal').style.display = 'none';
+            } else {
+                // 关闭指定的模态窗口
+                document.getElementById(modalId).style.display = 'none';
+            }
+            document.body.style.overflow = 'auto';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            var tangSongModal = document.getElementById('tangSongModal');
+            var tangPoetModal = document.getElementById('tangPoetModal');
+
+            if (event.target == tangSongModal) {
+                closeModal('tangSongModal');
+            } else if (event.target == tangPoetModal) {
+                closeModal('tangPoetModal');
+            }
+        }
+    </script>
+</body>
+</html>
