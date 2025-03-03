@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }} 历史节目 - 腾芳中学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="container mx-auto px-4 py-10 flex-grow">
+        <!-- 头部 -->
+        <header class="text-center mb-10">
+            <a href="{% url 'index' %}" class="inline-block">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-5 rounded-2xl shadow-lg">
+                    <h1 class="text-4xl font-bold tracking-wide">腾芳中学校园网</h1>
+                    <p class="mt-1 text-blue-100 text-lg">腾声汇 - 校园广播节目平台</p>
+                </div>
+            </a>
+        </header>
+
+        <!-- 节目历史 -->
+        <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 text-white">
+                <div class="flex items-center">
+                    <a href="{% url 'index' %}" class="mr-4 text-white hover:text-indigo-200 transition-colors">
+                        <i class="fas fa-arrow-left text-3xl"></i>
+                    </a>
+                    <div>
+                        <h2 class="text-4xl font-bold">{{ category.name }} - 历史节目</h2>
+                        <p class="text-indigo-200 mt-2 text-lg">查看所有历史节目及播放链接</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                {% if programs %}
+                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg mb-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 text-indigo-500">
+                            <i class="fas fa-info-circle text-2xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-indigo-700 font-medium text-lg">共找到 {{ programs.count }} 个节目记录</p>
+                            <p class="text-indigo-600 text-base mt-1">点击播放按钮可直接播放对应节目</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-base">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">发布日期</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">节目标题</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                <th class="px-6 py-3 bg-gray-50 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for program in programs %}
+                            <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
+                                <td class="px-6 py-4 whitespace-nowrap text-base text-gray-900">{{ program.publish_date|date:"Y年m月d日" }}</td>
+                                <td class="px-6 py-4 text-base text-gray-900">{{ program.title }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-base">
+                                    {% if program.is_active %}
+                                    <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">当前活跃</span>
+                                    {% else %}
+                                    <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">历史节目</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
+                                    <a href="{{ program.link }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 inline-flex items-center text-base">
+                                        <span class="mr-1">播放</span>
+                                        <i class="fas fa-play-circle text-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <a href="{% url 'index' %}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-home mr-2"></i>返回首页
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <div class="w-20 h-20 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-exclamation-circle text-gray-400 text-4xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-600 mb-2">暂无历史节目</h3>
+                    <p class="text-gray-500 mb-6 text-lg">该节目类别下还没有任何历史节目记录</p>
+
+                    <a href="{% url 'index' %}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-home mr-2"></i>返回首页
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6 mt-10">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2 text-base">© {% now "Y" %} 腾芳中学 | 版权所有</p>
+            <p class="text-gray-400 text-base">用心点亮每一个课堂</p>
+            {% if semester_name %}
+            <p class="text-gray-500 text-sm mt-2">{{ semester_name }}</p>
+            {% endif %}
+        </div>
+    </footer>
+</body>
+</html>

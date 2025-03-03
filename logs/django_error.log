@@ -1,0 +1,26 @@
+ERROR 2025-03-03 19:47:23,491 log 2612 11396 Internal Server Error: /video/
+Traceback (most recent call last):
+  File "G:\PyCharm\demo\djangoProject1\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "G:\PyCharm\demo\djangoProject1\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\tengfang\broadcast\views.py", line 192, in video_player
+    return render(request, 'video_player.html', context)
+                                                ^^^^^^^
+NameError: name 'context' is not defined
+ERROR 2025-03-03 19:47:23,493 basehttp 2612 11396 "GET /video/ HTTP/1.1" 500 73110
+ERROR 2025-03-03 19:47:27,617 log 2612 11396 Internal Server Error: /video/
+Traceback (most recent call last):
+  File "G:\PyCharm\demo\djangoProject1\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "G:\PyCharm\demo\djangoProject1\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\tengfang\broadcast\views.py", line 192, in video_player
+    return render(request, 'video_player.html', context)
+                                                ^^^^^^^
+NameError: name 'context' is not defined
+ERROR 2025-03-03 19:47:27,619 basehttp 2612 11396 "GET /video/ HTTP/1.1" 500 73110
