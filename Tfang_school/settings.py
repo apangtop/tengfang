@@ -18,10 +18,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-development')
 
 # 关闭调试模式
-DEBUG = True
+DEBUG = False
 
 # 允许的主机
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['47.109.184.51']
 
 # 应用定义
 INSTALLED_APPS = [
