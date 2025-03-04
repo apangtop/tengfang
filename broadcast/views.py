@@ -190,7 +190,7 @@ def video_player(request):
     视频播放页面视图
     """
     # 获取视频URL，2小时有效期
-    video_url = get_video_url(expires=7200)
+    video_url = get_video_url(expires=72000)
 
     # 准备视图上下文
     context = {
