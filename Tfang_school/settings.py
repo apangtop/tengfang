@@ -5,11 +5,6 @@ from dotenv import load_dotenv
 # 加载环境变量
 load_dotenv()
 
-OSS_ACCESS_KEY_ID = 'REMOVED_OSS_ACCESS_KEY_ID'
-OSS_ACCESS_KEY_SECRET = 'REMOVED_OSS_ACCESS_KEY_SECRET'
-OSS_BUCKET_NAME = 'cqbz-indoor-exercises'
-OSS_ENDPOINT = 'oss-cn-chengdu.aliyuncs.com'
-OSS_VIDEO_PATH = '7da4f66416cb4507e0ba34fac906a0df.mp4'
 
 # 构建路径
 BASE_DIR = Path(__file__).resolve().parent.parent
