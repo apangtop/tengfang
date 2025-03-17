@@ -276,7 +276,44 @@
             </div>
         </div>
     </div>
-        
+
+    <!-- 朝会思政卡片 -->
+    <div class="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-3xl">
+        <div class="bg-gradient-to-r from-red-500 to-red-700 text-white p-10">
+            <div class="flex items-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mr-6">
+                    <i class="fas fa-flag text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-4xl font-bold mb-2">朝会思政</h2>
+                    <p class="text-red-100 text-xl">思想政治教育</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-10">
+            <div class="mb-10 border-b border-gray-100 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-500 text-xl">节目名称:</span>
+                    <span class="font-semibold text-gray-800 text-xl">朝会思政</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 text-xl">更新周期:</span>
+                    <span class="font-semibold text-gray-800 text-xl">定期播放</span>
+                </div>
+            </div>
+            <a href="{% url 'video_player2' %}" target="_blank" class="block w-full bg-red-100 hover:bg-red-200 text-red-700 font-medium text-2xl py-8 px-6 rounded-2xl text-center transition duration-300 group">
+                <div class="flex items-center justify-center">
+                    <div class="w-14 h-14 bg-red-200 group-hover:bg-red-300 rounded-full flex items-center justify-center mr-5 transition duration-300">
+                        <i class="fas fa-play text-red-700 text-2xl"></i>
+                    </div>
+                    <span>播放本周节目</span>
+                </div>
+            </a>
+            <div class="mt-5 text-center">
+                <p class="text-gray-500">点击播放本周朝会思政教育内容</p>
+            </div>
+        </div>
+    </div>
             <!-- 如果周一和周二的节目都为空，则显示提示 -->
             {% if not weekly_programs and not tangsong_programs %}
             <div class="col-span-3 text-center py-16">
