@@ -207,7 +207,7 @@ def video_player2(request):
     """
     # 获取视频URL，2小时有效期
     video_url = get_video_url2(expires=72000)
-
+    print("video_url", video_url)
     # 准备视图上下文
     context = {
         'video_url': video_url,
