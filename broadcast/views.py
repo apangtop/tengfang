@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 import datetime
 from .models import ProgramCategory, Program, SystemConfig
-from .oos_helper import get_video_url
+from .oos_helper import get_video_url, get_video_url2
 
 
 def index(request):
@@ -196,6 +196,22 @@ def video_player(request):
     context = {
         'video_url': video_url,
         'video_title': '室内运动视频'
+    }
+
+    return render(request, 'video_player.html', context)
+
+
+def video_player2(request):
+    """
+    视频播放页面视图
+    """
+    # 获取视频URL，2小时有效期
+    video_url = get_video_url2(expires=72000)
+
+    # 准备视图上下文
+    context = {
+        'video_url': video_url,
+        'video_title': '朝会思政'
     }
 
     return render(request, 'video_player.html', context)

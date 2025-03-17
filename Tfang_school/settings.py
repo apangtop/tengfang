@@ -5,7 +5,12 @@ from dotenv import load_dotenv
 # 加载环境变量
 load_dotenv()
 
-
+OSS_ACCESS_KEY_ID = 'LTAI5t8DonwFs49iiJWq3Xut'
+OSS_ACCESS_KEY_SECRET = 'OmNaUnxz4hC8OxJq7quLkz7Re9pzIY'
+OSS_BUCKET_NAME = 'cqbz-indoor-exercises'
+OSS_ENDPOINT = 'oss-cn-chengdu.aliyuncs.com'
+OSS_VIDEO_PATH = '7da4f66416cb4507e0ba34fac906a0df.mp4'
+OSS_VIDEO_PATH_two = '7da4f66416cb4507e0ba34fac906a0df.mp4'
 # 构建路径
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-development')
 
 # 关闭调试模式
-DEBUG = False
+DEBUG = False;
 
 # 允许的主机
 ALLOWED_HOSTS = ['47.109.184.51']
