@@ -41,6 +41,8 @@ ENV/
 env/
 .env
 
+
+Tfang_schol.settings.py
 # 数据库备份
 *.sql
 *.sql.gz

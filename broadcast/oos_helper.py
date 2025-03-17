@@ -1,5 +1,5 @@
 import oss2
-from django.conf import settings
+from Tfang_school import settings
 
 
 def get_video_url(object_key=None, expires=3600):
