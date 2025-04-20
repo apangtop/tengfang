@@ -26,6 +26,7 @@ wheels/
 *.log
 *.pot
 local_settings.py
+settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
@@ -42,7 +43,6 @@ env/
 .env
 
 
-Tfang_schol.settings.py
 # 数据库备份
 *.sql
 *.sql.gz
