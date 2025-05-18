@@ -31,7 +31,7 @@ def get_video_url2(object_key=None, expires=3600):
 
     # 如果没有提供object_key，使用默认设置
     if object_key is None:
-        object_key = settings.OSS_VIDEO_PATH_two
+        object_key = settings.OSS_VIDEO_PATH_three
 
     # 确保路径编码正确，特别是对于包含中文的路径
     from urllib.parse import quote
