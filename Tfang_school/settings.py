@@ -18,10 +18,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-development')
 
 # 关闭调试模式
-DEBUG = False;
+DEBUG = True  # 临时开启调试模式以便查看错误
 
 # 允许的主机
-ALLOWED_HOSTS = ['47.109.184.51']
+ALLOWED_HOSTS = ['47.109.184.51', 'localhost', '127.0.0.1']
 
 # 应用定义
 INSTALLED_APPS = [
@@ -113,7 +113,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # 媒体文件
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 确保media目录存在
+os.makedirs(os.path.join(MEDIA_ROOT, 'uploads'), exist_ok=True)
+
+# 文件上传设置
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 
 # 默认主键类型
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -169,5 +178,34 @@ LOGGING = {
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # CORS配置
-CORS_ALLOW_ALL_ORIGINS = True  # 允许所有来源的请求
-CORS_ALLOW_CREDENTIALS = True  # 允许携带认证信息
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# CSRF配置
+CSRF_TRUSTED_ORIGINS = [
+    'http://47.109.184.51',
+    'http://localhost',
+    'http://127.0.0.1',
+]
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
