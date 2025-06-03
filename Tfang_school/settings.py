@@ -32,12 +32,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'broadcast.apps.BroadcastConfig',  # 你的广播应用
+    'corsheaders',
+    'qrcode_upload',  # 添加二维码上传应用
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # 添加 whitenoise 用于静态文件处理
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # 添加CORS中间件
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -164,3 +167,7 @@ LOGGING = {
 
 # WhiteNoise 配置（静态文件压缩和缓存）
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CORS配置
+CORS_ALLOW_ALL_ORIGINS = True  # 允许所有来源的请求
+CORS_ALLOW_CREDENTIALS = True  # 允许携带认证信息
