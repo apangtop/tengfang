@@ -65,7 +65,7 @@ class ProgramCategory(models.Model):
     name = models.CharField('节目名称', max_length=50)
     description = models.TextField('描述', blank=True)
     day_of_week = models.IntegerField('播出星期',
-                                      choices=[(1, '周一'), (2, '周二'), (4, '周四')])
+                                      choices=[(1, '周一'), (2, '周二'),(3,'周三'), (4, '周四'),(5,'周五')])
     icon_class = models.CharField('图标类名', max_length=50, default='fa-newspaper')
     color = models.CharField('主题颜色', max_length=20, default='blue')
     is_biweekly = models.BooleanField('是否双周轮播', default=False)
