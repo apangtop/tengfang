@@ -10,7 +10,7 @@ OSS_ACCESS_KEY_SECRET = 'OmNaUnxz4hC8OxJq7quLkz7Re9pzIY'
 OSS_BUCKET_NAME = 'cqbz-indoor-exercises'
 OSS_ENDPOINT = 'oss-cn-chengdu.aliyuncs.com'
 OSS_VIDEO_PATH = '7da4f66416cb4507e0ba34fac906a0df.mp4'
-OSS_VIDEO_PATH_two = '0929朝会思政课改 - Trim.mp4'
+OSS_VIDEO_PATH_two = '0519朝会最终版.mp4'
 # 构建路径
 BASE_DIR = Path(__file__).resolve().parent.parent
 
