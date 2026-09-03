@@ -15,10 +15,16 @@ DAY_CHOICES = [
 COLOR_CHOICES = [
     ("blue", "蓝色"),
     ("indigo", "靛蓝"),
+    ("purple", "紫色"),
     ("emerald", "绿色"),
+    ("green", "绿色（旧）"),
     ("amber", "琥珀"),
+    ("yellow", "黄色"),
+    ("orange", "橙色"),
     ("rose", "玫红"),
+    ("red", "红色"),
     ("slate", "灰蓝"),
+    ("gray", "灰色"),
 ]
 
 
