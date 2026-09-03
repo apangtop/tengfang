@@ -11,21 +11,38 @@
             font-family: "Microsoft YaHei", "Noto Sans SC", sans-serif;
             letter-spacing: 0;
         }
-        .card-blue { --accent: #2563eb; --soft: #dbeafe; --text: #1d4ed8; }
-        .card-indigo { --accent: #4f46e5; --soft: #e0e7ff; --text: #4338ca; }
-        .card-emerald { --accent: #059669; --soft: #d1fae5; --text: #047857; }
-        .card-amber { --accent: #d97706; --soft: #fef3c7; --text: #b45309; }
-        .card-rose { --accent: #e11d48; --soft: #ffe4e6; --text: #be123c; }
-        .card-slate { --accent: #475569; --soft: #e2e8f0; --text: #334155; }
+        .page-shell {
+            background:
+                radial-gradient(circle at 15% 8%, rgba(59, 130, 246, .14), transparent 28rem),
+                radial-gradient(circle at 88% 20%, rgba(236, 72, 153, .10), transparent 24rem),
+                linear-gradient(135deg, #eef7ff 0%, #f4f1ff 48%, #fff7ed 100%);
+        }
+        .hero-panel {
+            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 58%, #7c3aed 100%);
+        }
+        .card-blue { --accent: #2563eb; --accent2: #1d4ed8; --soft: #dbeafe; --text: #1d4ed8; }
+        .card-indigo { --accent: #4f46e5; --accent2: #3730a3; --soft: #e0e7ff; --text: #4338ca; }
+        .card-emerald { --accent: #059669; --accent2: #047857; --soft: #d1fae5; --text: #047857; }
+        .card-amber { --accent: #d97706; --accent2: #b45309; --soft: #fef3c7; --text: #b45309; }
+        .card-rose { --accent: #e11d48; --accent2: #be123c; --soft: #ffe4e6; --text: #be123c; }
+        .card-slate { --accent: #475569; --accent2: #334155; --soft: #e2e8f0; --text: #334155; }
         .program-card {
-            border-top: 5px solid var(--accent);
+            box-shadow: 0 22px 46px rgba(15, 23, 42, .13);
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+        .program-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 62px rgba(15, 23, 42, .18);
+        }
+        .card-head {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
         }
         .action-button {
             background: var(--soft);
             color: var(--text);
         }
         .action-button:hover {
-            filter: brightness(0.97);
+            filter: brightness(.97);
         }
         .modal {
             display: none;
@@ -35,93 +52,129 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-[#f7f9fc] text-slate-900">
-    <header class="border-b border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-6 md:flex-row md:items-center md:justify-between">
-            <div>
-                <p class="text-sm font-semibold text-indigo-600">腾芳中学</p>
-                <h1 class="mt-1 text-3xl font-bold">腾声汇</h1>
-                <p class="mt-2 text-base text-slate-500">校园广播节目平台</p>
+<body class="page-shell min-h-screen text-slate-900">
+    <main class="mx-auto max-w-7xl px-4 py-8 md:py-10">
+        <header class="mb-8 text-center md:mb-10">
+            <div class="hero-panel mx-auto inline-block rounded-2xl px-8 py-5 text-white shadow-xl md:px-12">
+                <h1 class="text-4xl font-bold tracking-wide md:text-5xl">腾芳中学校园网</h1>
+                <p class="mt-3 text-lg text-blue-100 md:text-xl">腾声汇 - 校园广播节目平台</p>
             </div>
-            <div class="grid gap-2 text-sm text-slate-600 sm:grid-cols-3 md:text-right">
-                <div class="rounded-md bg-slate-100 px-3 py-2">
-                    <span class="block text-xs text-slate-500">日期</span>
-                    <span class="font-semibold text-slate-800">{{ current_date|date:"Y年m月d日" }}</span>
-                </div>
-                <div class="rounded-md bg-slate-100 px-3 py-2">
-                    <span class="block text-xs text-slate-500">周次</span>
-                    <span class="font-semibold text-slate-800">第 {{ week_number }} 周 {% if is_odd_week %}单周{% else %}双周{% endif %}</span>
-                </div>
-                <div class="rounded-md bg-slate-100 px-3 py-2">
-                    <span class="block text-xs text-slate-500">学期</span>
-                    <span class="font-semibold text-slate-800">{{ semester_name }}</span>
-                </div>
-            </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="mx-auto max-w-7xl px-4 py-8">
+        <section class="mx-auto mb-8 max-w-5xl rounded-lg border-l-4 border-amber-400 bg-amber-50 p-4 shadow-md">
+            <div class="flex gap-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                    <i class="fas fa-bell text-lg"></i>
+                </div>
+                <div>
+                    <p class="font-semibold text-amber-800">提示：本页面用于全校统一播放校园广播节目</p>
+                    <p class="mt-1 text-sm text-amber-700">后台可添加、排序和停用卡片，老师点击对应卡片即可播放或浏览节目。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mx-auto mb-10 max-w-5xl rounded-xl bg-white/90 p-4 shadow-md ring-1 ring-white/70">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-calendar-alt text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-800">{{ current_date|date:"Y年m月d日 l" }}</p>
+                        <p class="mt-1 text-sm text-slate-500">{{ semester_name }}</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-bold text-indigo-700">
+                        第 {{ week_number }} 周 {% if is_odd_week %}单周{% else %}双周{% endif %}
+                    </span>
+                    <span class="text-sm text-slate-500">自 {{ first_week_date|date:"Y年m月d日" }} 起</span>
+                </div>
+            </div>
+        </section>
+
         {% if cards %}
-        <section class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <section class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {% for card in cards %}
-            <article class="program-card card-{{ card.color }} flex min-h-[360px] flex-col rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-                <div class="flex items-start gap-4 p-6">
-                    <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-md text-white" style="background: var(--accent);">
-                        <i class="fas {{ card.icon_class }} text-xl"></i>
+            <article class="program-card card-{{ card.color }} overflow-hidden rounded-3xl bg-white">
+                <div class="card-head relative p-8 text-white md:p-9">
+                    <div class="flex items-center gap-5">
+                        <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/20">
+                            <i class="fas {{ card.icon_class }} text-4xl"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-3xl font-bold leading-tight md:text-4xl">{{ card.title }}</h2>
+                            {% if card.subtitle %}
+                            <p class="mt-2 text-lg text-white/85 md:text-xl">{{ card.subtitle }}</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <h2 class="text-2xl font-bold leading-tight">{{ card.title }}</h2>
-                        {% if card.subtitle %}
-                        <p class="mt-1 text-base font-medium text-slate-600">{{ card.subtitle }}</p>
-                        {% endif %}
-                        {% if card.description %}
-                        <p class="mt-3 text-sm leading-6 text-slate-500">{{ card.description }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <dl class="mx-6 grid gap-3 border-y border-slate-100 py-5">
                     {% for label, value in card.meta %}
-                    <div class="flex items-center justify-between gap-4">
-                        <dt class="text-sm text-slate-500">{{ label }}</dt>
-                        <dd class="text-right text-sm font-semibold text-slate-800">{{ value }}</dd>
-                    </div>
-                    {% endfor %}
-                    {% if card.latest_program %}
-                    <div class="pt-1">
-                        <dt class="text-sm text-slate-500">当前节目</dt>
-                        <dd class="mt-1 line-clamp-2 text-base font-semibold text-slate-900">{{ card.latest_program.title }}</dd>
+                    {% if label == "周次类型" %}
+                    <div class="absolute right-5 top-5 rounded-full bg-white/90 px-3 py-1 text-sm font-bold" style="color: var(--text);">
+                        {{ value }}
                     </div>
                     {% endif %}
-                </dl>
+                    {% endfor %}
+                </div>
 
-                <div class="mt-auto space-y-3 p-6">
+                <div class="p-8 md:p-9">
+                    {% if card.description %}
+                    <p class="mb-6 text-base leading-7 text-slate-500">{{ card.description }}</p>
+                    {% endif %}
+
+                    <dl class="mb-8 space-y-4 border-b border-slate-100 pb-7">
+                        {% for label, value in card.meta %}
+                        {% if label != "周次类型" %}
+                        <div class="flex items-center justify-between gap-5">
+                            <dt class="text-base text-slate-500 md:text-lg">{{ label }}:</dt>
+                            <dd class="text-right text-base font-bold text-slate-800 md:text-lg">{{ value }}</dd>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% if card.latest_program %}
+                        <div>
+                            <dt class="text-base text-slate-500 md:text-lg">当前节目:</dt>
+                            <dd class="mt-2 text-lg font-bold leading-snug text-slate-900">{{ card.latest_program.title }}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+
                     {% if card.opens_modal %}
-                    <button type="button" class="action-button flex h-14 w-full items-center justify-center gap-3 rounded-md px-4 text-base font-semibold" data-open-modal="{{ card.modal_id }}">
-                        <i class="fas fa-list"></i>
+                    <button type="button" class="action-button group flex min-h-[76px] w-full items-center justify-center gap-4 rounded-2xl px-5 text-xl font-bold transition" data-open-modal="{{ card.modal_id }}">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-white/55 transition group-hover:bg-white/80">
+                            <i class="fas fa-list"></i>
+                        </span>
                         <span>{{ card.button_text }}</span>
                     </button>
                     {% elif card.action_url %}
-                    <a href="{{ card.action_url }}" target="_blank" rel="noopener" class="action-button flex h-14 w-full items-center justify-center gap-3 rounded-md px-4 text-base font-semibold">
-                        <i class="fas fa-play"></i>
+                    <a href="{{ card.action_url }}" target="_blank" rel="noopener" class="action-button group flex min-h-[76px] w-full items-center justify-center gap-4 rounded-2xl px-5 text-xl font-bold transition">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-white/55 transition group-hover:bg-white/80">
+                            <i class="fas fa-play"></i>
+                        </span>
                         <span>{{ card.button_text }}</span>
                     </a>
                     {% endif %}
 
                     {% if card.category %}
-                    <a href="{% url 'broadcast:program_history' card.category.id %}" class="flex items-center justify-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900">
-                        <i class="fas fa-clock-rotate-left"></i>
-                        <span>查看历史节目</span>
-                    </a>
+                    <div class="mt-5 text-center">
+                        <a href="{% url 'broadcast:program_history' card.category.id %}" class="inline-flex items-center gap-2 text-base font-semibold hover:underline" style="color: var(--text);">
+                            <i class="fas fa-history"></i>
+                            <span>查看历史节目</span>
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
             </article>
             {% endfor %}
         </section>
         {% else %}
-        <section class="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
-            <h2 class="text-xl font-bold text-slate-700">暂无可显示卡片</h2>
-            <p class="mt-2 text-slate-500">请在后台添加首页卡片或节目内容。</p>
+        <section class="rounded-3xl bg-white p-16 text-center shadow-xl">
+            <div class="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <i class="fas fa-exclamation-circle text-4xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-700">暂无卡片</h2>
+            <p class="mt-2 text-slate-500">请在后台添加首页卡片。</p>
         </section>
         {% endif %}
     </main>
@@ -129,40 +182,55 @@
     {% for card in cards %}
     {% if card.opens_modal %}
     <div id="{{ card.modal_id }}" class="modal card-{{ card.color }} fixed inset-0 z-50 items-center justify-center bg-slate-950/60 p-4">
-        <div class="max-h-[86vh] w-full max-w-3xl overflow-hidden rounded-lg bg-white shadow-xl">
-            <div class="flex items-center justify-between px-6 py-5 text-white" style="background: var(--accent);">
+        <div class="max-h-[86vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div class="card-head flex items-center justify-between p-6 text-white">
                 <div>
-                    <h3 class="text-xl font-bold">{{ card.subtitle|default:card.title }}</h3>
-                    <p class="mt-1 text-sm text-white/80">{{ card.programs|length }} 个节目</p>
+                    <h3 class="text-2xl font-bold">{{ card.subtitle|default:card.title }}</h3>
+                    <p class="mt-1 text-sm text-white/80">共 {{ card.programs|length }} 个节目</p>
                 </div>
-                <button type="button" class="flex h-10 w-10 items-center justify-center rounded-md bg-white/15 hover:bg-white/25" data-close-modal="{{ card.modal_id }}" aria-label="关闭">
-                    <i class="fas fa-times"></i>
+                <button type="button" class="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25" data-close-modal="{{ card.modal_id }}" aria-label="关闭">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             <div class="max-h-[68vh] overflow-y-auto p-6">
                 {% if card.programs %}
-                <div class="grid gap-3">
+                <div class="space-y-4">
                     {% for program in card.programs %}
-                    <a href="{{ program.link }}" target="_blank" rel="noopener" class="rounded-md border border-slate-200 p-4 hover:border-slate-300 hover:bg-slate-50">
+                    <a href="{{ program.link }}" target="_blank" rel="noopener" class="block rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <span class="font-semibold text-slate-900">{{ program.title }}</span>
+                            <h4 class="text-lg font-bold text-slate-800">{{ program.title }}</h4>
                             <span class="text-sm text-slate-500">{{ program.publish_date|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 font-semibold" style="color: var(--text);">
+                            <i class="fas fa-play-circle"></i>
+                            <span>播放节目</span>
                         </div>
                     </a>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="py-8 text-center text-slate-500">暂无节目。</p>
+                <div class="py-12 text-center">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <i class="fas fa-exclamation-circle text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-600">暂无节目</h4>
+                </div>
                 {% endif %}
+            </div>
+            <div class="border-t border-slate-200 bg-slate-50 p-4 text-center">
+                <button type="button" class="rounded-lg bg-slate-200 px-6 py-2 font-semibold text-slate-700 hover:bg-slate-300" data-close-modal="{{ card.modal_id }}">
+                    关闭窗口
+                </button>
             </div>
         </div>
     </div>
     {% endif %}
     {% endfor %}
 
-    <footer class="border-t border-slate-200 bg-white">
-        <div class="mx-auto max-w-7xl px-4 py-5 text-sm text-slate-500">
-            © {% now "Y" %} 腾芳中学
+    <footer class="mt-10 bg-slate-800 py-8 text-white">
+        <div class="mx-auto max-w-7xl px-4 text-center">
+            <p class="text-lg">© {% now "Y" %} 腾芳中学 | 版权所有</p>
+            <p class="mt-3 text-slate-300">用心点亮每一个课堂</p>
         </div>
     </footer>
 
