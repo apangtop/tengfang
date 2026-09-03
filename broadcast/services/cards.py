@@ -23,13 +23,13 @@ def next_program_date(current_date, day_of_week):
 
 
 def build_home_cards(now, is_odd_week):
-    configured_cards = _configured_cards(now)
+    configured_cards = _configured_cards(now, is_odd_week)
     if configured_cards:
         return configured_cards
     return _legacy_cards(now, is_odd_week)
 
 
-def _configured_cards(now):
+def _configured_cards(now, is_odd_week):
     try:
         cards = list(
             BroadcastCard.objects.filter(is_active=True)
@@ -39,7 +39,13 @@ def _configured_cards(now):
     except (OperationalError, ProgrammingError):
         return []
 
-    return [card for card in (_build_card_data(card, now) for card in cards) if card]
+    return [
+        card_data
+        for card in cards
+        if _should_display_card(card, is_odd_week)
+        for card_data in [_build_card_data(card, now)]
+        if card_data
+    ]
 
 
 def _build_card_data(card, now):
@@ -63,7 +69,7 @@ def _build_card_data(card, now):
         "subtitle": card.subtitle,
         "description": card.description,
         "icon_class": card.icon_class,
-        "color": _normalize_color(card.color),
+        "color": _resolve_card_color(card),
         "button_text": card.button_text,
         "action_url": action_url,
         "latest_program": latest_program,
@@ -246,6 +252,7 @@ def _normalize_color(color):
         "purple": "purple",
         "green": "emerald",
         "emerald": "emerald",
+        "pink": "pink",
         "red": "rose",
         "rose": "rose",
         "yellow": "amber",
@@ -256,6 +263,26 @@ def _normalize_color(color):
         "slate": "slate",
     }
     return color_map.get((color or "").strip().lower(), "blue")
+
+
+def _should_display_card(card, is_odd_week):
+    if card.card_type != BroadcastCard.TYPE_LATEST_PROGRAM:
+        return True
+
+    category = card.category
+    if not category:
+        return True
+
+    if category.day_of_week not in [2, 4]:
+        return True
+
+    return category.is_biweekly != is_odd_week
+
+
+def _resolve_card_color(card):
+    if card.category_id and card.category and card.category.color:
+        return _normalize_color(card.category.color)
+    return _normalize_color(card.color)
 
 
 def _format_date(value):
