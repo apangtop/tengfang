@@ -21,6 +21,7 @@ COLOR_CHOICES = [
     ("amber", "琥珀"),
     ("yellow", "黄色"),
     ("orange", "橙色"),
+    ("pink", "粉色"),
     ("rose", "玫红"),
     ("red", "红色"),
     ("slate", "灰蓝"),
