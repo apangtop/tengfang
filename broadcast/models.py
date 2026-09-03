@@ -98,6 +98,10 @@ class ProgramCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.name = (self.name or "").strip()
+        super().save(*args, **kwargs)
+
     def current_week_label(self):
         if self.day_of_week not in [2, 4]:
             return ""
@@ -125,6 +129,10 @@ class Program(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.title = (self.title or "").strip()
+        super().save(*args, **kwargs)
 
 
 class BroadcastCard(models.Model):
