@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from .forms import ProgramCategoryForm, ProgramForm
 from .models import BroadcastCard, Program, ProgramCategory, SystemConfig
 
 
@@ -19,12 +20,14 @@ class SystemConfigAdmin(admin.ModelAdmin):
 
 class ProgramInline(admin.TabularInline):
     model = Program
+    form = ProgramForm
     extra = 1
     fields = ("title", "publish_date", "link", "is_active")
 
 
 @admin.register(ProgramCategory)
 class ProgramCategoryAdmin(admin.ModelAdmin):
+    form = ProgramCategoryForm
     list_display = ("name", "day_of_week", "is_biweekly", "alternate_with", "color")
     list_filter = ("day_of_week", "is_biweekly", "color")
     search_fields = ("name", "description")
@@ -33,6 +36,7 @@ class ProgramCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
+    form = ProgramForm
     list_display = ("title", "category", "publish_date", "is_active")
     list_filter = ("category", "publish_date", "is_active")
     search_fields = ("title", "category__name")
