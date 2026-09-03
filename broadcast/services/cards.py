@@ -63,7 +63,7 @@ def _build_card_data(card, now):
         "subtitle": card.subtitle,
         "description": card.description,
         "icon_class": card.icon_class,
-        "color": card.color,
+        "color": _normalize_color(card.color),
         "button_text": card.button_text,
         "action_url": action_url,
         "latest_program": latest_program,
@@ -240,8 +240,22 @@ def _latest_program(category):
 
 
 def _normalize_color(color):
-    allowed = {"blue", "indigo", "emerald", "amber", "rose", "slate"}
-    return color if color in allowed else "blue"
+    color_map = {
+        "blue": "blue",
+        "indigo": "indigo",
+        "purple": "purple",
+        "green": "emerald",
+        "emerald": "emerald",
+        "red": "rose",
+        "rose": "rose",
+        "yellow": "amber",
+        "orange": "amber",
+        "amber": "amber",
+        "gray": "slate",
+        "grey": "slate",
+        "slate": "slate",
+    }
+    return color_map.get((color or "").strip().lower(), "blue")
 
 
 def _format_date(value):
