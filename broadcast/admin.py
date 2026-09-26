@@ -1,7 +1,38 @@
 from django.contrib import admin
 
 from .forms import BroadcastCardForm, ProgramCategoryForm, ProgramForm, SystemConfigForm
-from .models import BroadcastCard, Program, ProgramCategory, SystemConfig
+from .models import (
+    BroadcastCard,
+    OssVideoConfig,
+    Program,
+    ProgramCategory,
+    SystemConfig,
+)
+
+
+@admin.register(OssVideoConfig)
+class OssVideoConfigAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "bucket_name", "updated_at")
+    readonly_fields = ("updated_at",)
+    fieldsets = (
+        (
+            "OSS 连接",
+            {
+                "fields": ("bucket_name", "endpoint"),
+                "description": "AccessKey 使用服务器现有配置。此处只修改视频位置，保存后立即生效。",
+            },
+        ),
+        ("视频路径", {"fields": ("primary_object_key", "secondary_object_key")}),
+        ("更新时间", {"fields": ("updated_at",)}),
+    )
+
+    def has_add_permission(self, request):
+        return not OssVideoConfig.objects.exists() and super().has_add_permission(
+            request
+        )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(SystemConfig)
