@@ -20,16 +20,21 @@
    - `室内运动视频` / `朝会思政视频`: use the existing built-in video player routes.
 4. Use `排序` to control homepage order and `启用` to hide/show cards.
 
-## Recommended next steps
+## Completed in the compatibility refactor
+
+1. Upgraded the supported runtime target to Python 3.10–3.14 and Django 5.2 LTS.
+2. Moved semester scheduling, program selection, homepage cards, and OSS signing into focused services.
+3. Kept `broadcast/oos_helper.py` as a compatibility import while using `broadcast/services/oss.py` internally.
+4. Added regression coverage for week calculation, biweekly filtering, card fallback, admin validation, routes, history, and video configuration failures.
+5. Added the missing model-state migration and reproducible local/production setup documentation.
+6. Made file logging optional and rotating, and made HTTPS/HSTS deployment settings configurable.
+
+## Remaining operational work
 
 1. Rotate the Aliyun OSS AccessKey that was previously committed in `settings.py`.
 2. Create a real `.env` from `.env.example` on the server and keep it out of git.
-3. Fix the garbled template/source encoding by converting all project text files to UTF-8.
-4. Upgrade the runtime from Python 3.6 to a supported Python version, then move Django from 3.2 LTS to a current LTS release.
-5. Replace `broadcast/oos_helper.py` with a service module named `oss_helper.py`, then update imports. The current filename has a typo but was preserved to keep the change small.
-6. Move display rules for weekly, biweekly, and special programs into model/query service functions so `broadcast/views.py` only prepares view context.
-7. Add tests for week-number calculation, biweekly filtering, and video URL configuration failures.
-8. Rebuild deployment around a reproducible environment instead of committing or copying `venv/`, `staticfiles/`, logs, SQL dumps, and server artifacts.
+3. Stop distributing the historical committed `venv/`, `staticfiles/`, logs, SQL dumps, and server artifacts after confirming the deployment no longer consumes them.
+4. Back up the production database, run `python manage.py migrate`, and perform a browser smoke test before switching traffic.
 
 ## Bigger cleanup idea
 

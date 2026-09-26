@@ -93,7 +93,7 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-bold text-indigo-700">
-                        第 {{ week_number }} 周 {% if is_odd_week %}单周{% else %}双周{% endif %}
+                        {% if semester_has_started %}第 {{ week_number }} 周 {% if is_odd_week %}单周{% else %}双周{% endif %}{% else %}学期尚未开始{% endif %}
                     </span>
                     <span class="text-sm text-slate-500">自 {{ first_week_date|date:"Y年m月d日" }} 起</span>
                 </div>

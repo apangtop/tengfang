@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from .forms import ProgramCategoryForm, ProgramForm
+from .forms import BroadcastCardForm, ProgramCategoryForm, ProgramForm, SystemConfigForm
 from .models import BroadcastCard, Program, ProgramCategory, SystemConfig
 
 
 @admin.register(SystemConfig)
 class SystemConfigAdmin(admin.ModelAdmin):
+    form = SystemConfigForm
     list_display = ("semester_name", "first_week_start_date", "updated_at")
     readonly_fields = ("created_at", "updated_at")
 
@@ -43,24 +44,46 @@ class ProgramAdmin(admin.ModelAdmin):
     date_hierarchy = "publish_date"
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("category").order_by("-publish_date")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("category")
+            .order_by("-publish_date")
+        )
 
 
 @admin.register(BroadcastCard)
 class BroadcastCardAdmin(admin.ModelAdmin):
-    list_display = ("title", "card_type", "category", "sort_order", "is_active", "updated_at")
+    form = BroadcastCardForm
+    list_display = (
+        "title",
+        "card_type",
+        "category",
+        "sort_order",
+        "is_active",
+        "updated_at",
+    )
     list_editable = ("sort_order", "is_active")
     list_filter = ("card_type", "color", "is_active")
     search_fields = ("title", "subtitle", "description", "category__name")
     autocomplete_fields = ("category",)
     fieldsets = (
-        ("展示内容", {
-            "fields": ("title", "subtitle", "description", "icon_class", "color", "button_text")
-        }),
-        ("行为", {
-            "fields": ("card_type", "category", "link_url", "show_latest_program")
-        }),
-        ("发布", {
-            "fields": ("sort_order", "is_active")
-        }),
+        (
+            "展示内容",
+            {
+                "fields": (
+                    "title",
+                    "subtitle",
+                    "description",
+                    "icon_class",
+                    "color",
+                    "button_text",
+                )
+            },
+        ),
+        (
+            "行为",
+            {"fields": ("card_type", "category", "link_url", "show_latest_program")},
+        ),
+        ("发布", {"fields": ("sort_order", "is_active")}),
     )

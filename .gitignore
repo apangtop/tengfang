@@ -26,9 +26,9 @@ wheels/
 *.log
 *.pot
 local_settings.py
-settings.py
 db.sqlite3
 db.sqlite3-journal
+work-*.sqlite3
 media/
 
 # 静态文件收集目录（通常不需要版本控制）
@@ -38,6 +38,7 @@ static/rest_framework/
 
 # 虚拟环境
 venv/
+.venv/
 ENV/
 env/
 .env

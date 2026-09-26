@@ -1,0 +1,6 @@
+exclude = ["broadcast/migrations", "venv", ".venv"]
+
+[lint]
+# Django uses mutable class attributes for model/admin metadata by design, and
+# the historical project package name is part of the deployment import path.
+ignore = ["N999", "RUF012"]
