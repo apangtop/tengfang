@@ -9,6 +9,7 @@
         <h1 class="mt-1 text-2xl font-bold">{{ video_title }}</h1>
     </div>
 
+    {% if video_url %}
     <div class="aspect-video overflow-hidden rounded-md bg-black">
         <video class="h-full w-full" controls autoplay playsinline>
             <source src="{{ video_url }}" type="video/mp4">
@@ -17,5 +18,12 @@
     </div>
 
     <p class="mt-4 text-center text-sm text-slate-500">本视频仅供校内教学使用，请勿外传。</p>
+    {% else %}
+    <div class="rounded-md border border-amber-200 bg-amber-50 px-6 py-12 text-center">
+        <i class="fas fa-triangle-exclamation text-3xl text-amber-500"></i>
+        <p class="mt-4 font-semibold text-amber-800">{{ video_error }}</p>
+        <a href="{% url 'index' %}" class="mt-6 inline-flex rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700">返回首页</a>
+    </div>
+    {% endif %}
 </section>
 {% endblock %}

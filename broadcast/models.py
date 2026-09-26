@@ -3,7 +3,6 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
-
 DAY_CHOICES = [
     (1, "周一"),
     (2, "周二"),
@@ -36,7 +35,9 @@ class SystemConfig(models.Model):
         "第一周起始日期",
         help_text="设置学期第一周的开始日期（周一）",
     )
-    semester_name = models.CharField("学期名称", max_length=50, default="2025年春季学期")
+    semester_name = models.CharField(
+        "学期名称", max_length=50, default="2025年春季学期"
+    )
     created_at = models.DateTimeField("创建时间", auto_now_add=True)
     updated_at = models.DateTimeField("更新时间", auto_now=True)
 
@@ -58,25 +59,26 @@ class SystemConfig(models.Model):
         days_to_monday = (7 - jan_first.weekday()) % 7
         first_monday = jan_first + datetime.timedelta(days=days_to_monday)
 
-        return cls.objects.create(
-            first_week_start_date=first_monday,
-            semester_name=f"{year}年春季学期",
+        config, _ = cls.objects.get_or_create(
+            pk=1,
+            defaults={
+                "first_week_start_date": first_monday,
+                "semester_name": f"{year}年春季学期",
+            },
         )
+        return config
 
     @classmethod
     def get_current_week_number(cls):
+        from .services.schedule import week_number_for
+
         config = cls.get_current_config()
-        today = timezone.now().date()
-        first_day = config.first_week_start_date
-
-        if today < first_day:
-            return 0
-
-        return ((today - first_day).days // 7) + 1
+        return week_number_for(timezone.localdate(), config.first_week_start_date)
 
     @classmethod
     def is_odd_week(cls):
-        return cls.get_current_week_number() % 2 == 1
+        week_number = cls.get_current_week_number()
+        return week_number > 0 and week_number % 2 == 1
 
 
 class ProgramCategory(models.Model):
@@ -163,7 +165,9 @@ class BroadcastCard(models.Model):
     subtitle = models.CharField("副标题", max_length=120, blank=True)
     description = models.TextField("说明", blank=True)
     icon_class = models.CharField("图标类名", max_length=50, default="fa-play")
-    color = models.CharField("主题颜色", max_length=20, choices=COLOR_CHOICES, default="blue")
+    color = models.CharField(
+        "主题颜色", max_length=20, choices=COLOR_CHOICES, default="blue"
+    )
     card_type = models.CharField("卡片类型", max_length=30, choices=CARD_TYPE_CHOICES)
     category = models.ForeignKey(
         ProgramCategory,
