@@ -202,7 +202,7 @@ class ViewTests(TestCase):
         self.assertContains(response, "视频暂未配置", status_code=503)
 
 
-class OssServiceTests(SimpleTestCase):
+class OssServiceTests(TestCase):
     @override_settings(OSS_VIDEO_PATH_TWO="second.mp4")
     @patch("broadcast.services.oss._build_bucket")
     def test_secondary_video_uses_its_configured_object(self, bucket_builder):

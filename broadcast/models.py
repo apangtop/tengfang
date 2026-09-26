@@ -1,5 +1,8 @@
 import datetime
+import re
+from urllib.parse import urlsplit
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -192,3 +195,86 @@ class BroadcastCard(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class OssVideoConfig(models.Model):
+    """Editable media locations; credentials remain in server configuration."""
+
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    bucket_name = models.CharField(
+        "Bucket 名称",
+        max_length=63,
+        blank=True,
+        help_text="留空沿用服务器的 OSS_BUCKET_NAME。",
+    )
+    endpoint = models.CharField(
+        "Endpoint",
+        max_length=255,
+        blank=True,
+        help_text="例如 https://oss-cn-chengdu.aliyuncs.com；留空沿用服务器配置。",
+    )
+    primary_object_key = models.CharField(
+        "室内运动视频路径",
+        max_length=1024,
+        blank=True,
+        help_text="填写 Bucket 内的对象路径，例如 videos/exercise.mp4。留空沿用原配置。",
+    )
+    secondary_object_key = models.CharField(
+        "朝会思政视频路径",
+        max_length=1024,
+        blank=True,
+        help_text="填写 Bucket 内的对象路径，例如 videos/morning.mp4。留空沿用原配置。",
+    )
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "OSS 视频配置"
+        verbose_name_plural = "OSS 视频配置"
+
+    def __str__(self):
+        return "校园视频 OSS 配置"
+
+    def clean(self):
+        super().clean()
+        self.bucket_name = self.bucket_name.strip()
+        self.endpoint = self.endpoint.strip()
+        errors = {}
+        if self.bucket_name and not re.match(
+            r"^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$", self.bucket_name
+        ):
+            errors["bucket_name"] = (
+                "Bucket 名称须为 3–63 位小写字母、数字或连字符，首尾不能是连字符。"
+            )
+        if self.endpoint:
+            if "://" not in self.endpoint:
+                self.endpoint = "https://" + self.endpoint
+            try:
+                parsed = urlsplit(self.endpoint)
+                valid = (
+                    parsed.scheme in ("http", "https")
+                    and parsed.hostname
+                    and not parsed.username
+                    and not parsed.password
+                    and parsed.path in ("", "/")
+                    and not parsed.query
+                    and not parsed.fragment
+                    and not any(c.isspace() for c in self.endpoint)
+                )
+                valid = valid and (parsed.port is None or parsed.port > 0)
+            except ValueError:
+                valid = False
+            if not valid:
+                errors["endpoint"] = (
+                    "请填写 OSS Endpoint 域名，不要填写视频完整链接、账号或路径。"
+                )
+            else:
+                self.endpoint = self.endpoint.rstrip("/")
+        for field in ("primary_object_key", "secondary_object_key"):
+            value = getattr(self, field).strip()
+            setattr(self, field, value)
+            if value.startswith(("/", "http://", "https://")):
+                errors[field] = (
+                    "请填写 Bucket 内的对象路径，不要填写完整 URL 或以 / 开头。"
+                )
+        if errors:
+            raise ValidationError(errors)

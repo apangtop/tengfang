@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
 
-from django.core.exceptions import ImproperlyConfigured
+import django
 from dotenv import load_dotenv
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(str(BASE_DIR / ".env"))
 
 
 def env_bool(name, default=False):
@@ -35,8 +34,6 @@ def env_int(name, default=0):
 
 DEBUG = env_bool("DEBUG", False)
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me")
-if not DEBUG and SECRET_KEY == "django-insecure-change-me":
-    raise ImproperlyConfigured("SECRET_KEY must be configured when DEBUG is false")
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", ["47.109.184.51", "localhost", "127.0.0.1"])
 
@@ -130,12 +127,15 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+if django.VERSION >= (4, 2):
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

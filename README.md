@@ -4,7 +4,7 @@
 
 ## 本地运行
 
-要求 Python 3.10–3.14，推荐使用 Python 3.12。
+原有 Python 3.6 / Django 3.2 服务器可继续使用；依赖文件按 Python 版本选择原有依赖或现代依赖。新建环境推荐使用 Python 3.12。服务器运行环境升级应单独安排。
 
 ```powershell
 py -3.12 -m venv .venv
@@ -40,6 +40,26 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 python manage.py check --deploy
 gunicorn -c gunicorn_config.py Tfang_school.wsgi:application
+```
+
+## 后台修改 OSS 视频
+
+执行迁移后，在 `/admin/` 的 Broadcast 分组进入「OSS 视频配置」，首次点击「添加」。
+
+- Bucket 名称与 Endpoint 可修改，留空使用服务器原有配置。
+- 「室内运动视频路径」对应 `/video/`，「朝会思政视频路径」对应 `/video2/`。
+- 对象路径填写 `videos/example.mp4` 这样的 Bucket 内路径，不填写完整 URL 或临时签名链接。
+- 保存后下一次打开或刷新视频页面立即使用新配置，无需重启服务；已打开的视频页面需要刷新。
+- AccessKey ID / Secret 仍来自服务器原有环境变量，不写入该数据库表，也不显示在后台。
+- 未添加配置、字段留空时均沿用原配置。后台只保留一份配置，支持修改，不提供删除入口。
+
+上线时使用现有服务器解释器，代码上传后执行：
+
+```bash
+cd /var/www/tengfang
+/root/venv/bin/python3 manage.py check
+/root/venv/bin/python3 manage.py migrate
+systemctl restart django-tengfang.service
 ```
 
 ## 测试

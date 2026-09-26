@@ -1,18 +1,17 @@
 """Semester calendar calculations used by views and card builders."""
 
-from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from collections import namedtuple
+from datetime import datetime, timedelta
 
 from django.utils import timezone
 
 from broadcast.models import SystemConfig
 
 
-@dataclass(frozen=True)
-class SemesterState:
-    config: SystemConfig
-    current_date: date
-    week_number: int
+class SemesterState(namedtuple("SemesterStateBase", "config current_date week_number")):
+    """Immutable semester state, compatible with the original Python 3.6 runtime."""
+
+    __slots__ = ()
 
     @property
     def is_odd_week(self):
